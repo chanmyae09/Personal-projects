@@ -5,7 +5,7 @@ import random
 color = ["red", "green", "blue", "yellow", "purple", "orange", "pink",]
 screen = t.Screen()
 screen.setup(width =500,height = 400)
-user_bet = screen.textinput(title = "Make your bet",prompt = "Which turtle will win teh race? Enter a color:")
+user_bet = screen.textinput(title = "Make your bet",prompt = "Which turtle will win the race? Enter a color:")
 y_positions = [-70,-40,-10,20,50,80]
 all_turtles = []
 for turtle_index in range(0,6):

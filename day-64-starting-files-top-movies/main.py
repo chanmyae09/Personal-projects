@@ -52,7 +52,8 @@ second_movie = Movie(
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    all_movies = db.session.query(Movie).all()
+    return render_template("index.html",movies=all_movies)
 
 
 if __name__ == '__main__':
