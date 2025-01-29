@@ -1,3 +1,5 @@
+from idlelib.squeezer import Squeezer
+
 from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
@@ -26,14 +28,31 @@ app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
 
 # CREATE DB
+class Base(DeclarativeBase):
+    pass
+db = SQLAlchemy(model_class=Base)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///movives.db"
 
+db.init_app(app)
 
 # CREATE TABLE
+class Movie(db.Model):
+    id:Mapped[int]= mapped_column(primary_key=True)
+    title:Mapped[str]=mapped_column(String(250),nullable=False,unique=True)
+    year:Mapped[int]=mapped_column(Integer,nullable=False)
+    description:Mapped[int]= mapped_column(String(500),nullable=False)
+    rating:Mapped[int]= mapped_column(Integer,nullable=False)
+    ranking: Mapped[int] = mapped_column(Integer, nullable=False)
+    review:Mapped[int]= mapped_column(String(250),nullable=False)
+    img_url:Mapped[int]= mapped_column(String(250),nullable=False)
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    movies = db.session.execute(db.select(Movie).order_by(Movie.title)).scalars()
+    return render_template("index.html",movies= movies)
 
 
 if __name__ == '__main__':
