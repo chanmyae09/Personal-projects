@@ -1,0 +1,14 @@
+{
+    "amazon": {
+        "email": "angela@gmail.com",
+        "password": "sdfsdf"
+    },
+    "ebay": {
+        "email": "angela@gmail.com",
+        "password": "sdfsdfs"
+    },
+    "twitter": {
+        "email": "angela@gmail.com",
+        "password": "sdfsdfs"
+    }
+}
