@@ -55,21 +55,18 @@ def add():
         return redirect(url_for("home"))
     return render_template("add.html")
 
-@app.route("/edit/<id>",methods=['GET', 'POST'])
+@app.route("/edit",methods=['GET', 'POST'])
 def edit(id):
+    book_id = request.args.get("id")
     if request.method=="POST":
-        book_to_update = db.session.execute(db.select(Book).where(Book.id == int(id))).scalar()
+        book_to_update = db.session.execute(db.select(Book).where(Book.id == book_id).scalar())
         book_to_update.rating=request.form.get("changed_rating")
         db.session.commit()
         return redirect(url_for("home"))
     else:
         with app.app_context():
-            book = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+            book = db.session.execute(db.select(Book).where(Book.id == book_id)).scalar()
             return render_template("edit.html",book= book)
-
-
-
-
 
 
 

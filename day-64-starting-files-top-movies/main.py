@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, InputRequired
 import requests
 
 app = Flask(__name__)
@@ -34,6 +34,15 @@ class Movie(db.Model):
 with app.app_context():
     db.create_all()
 
+class RateMovieForm(FlaskForm):
+    rating = StringField('Your rating out of 10 e.g. 7.5')
+    review = StringField('Your Review',)
+    submit = SubmitField("Done")
+
+class AddMovieForm(FlaskForm):
+    movie = StringField("Movie Title",validators=[DataRequired()])
+    submit = SubmitField("Add Movie")
+
 ## After adding the new_movie the code needs to be commented out/deleted.
 ## So you are not trying to add the same movie twice. The db will reject non-unique movie titles.
 second_movie = Movie(
@@ -54,7 +63,31 @@ second_movie = Movie(
 def home():
     all_movies = db.session.query(Movie).all()
     return render_template("index.html",movies=all_movies)
+@app.route("/delete")
+def delete_movie():
+    movie_id = request.args.get("id")
+    movie = db.get_or_404(Movie,movie_id)
+    db.session.delete(movie)
+    db.session.commit()
+    return redirect(url_for('home'))
 
+
+@app.route("/edit", methods=["GET", "POST"])
+def rate_movie():
+    form = RateMovieForm()
+    movie_id = request.args.get("id")
+    movie = db.get_or_404(Movie, movie_id)
+    if form.validate_on_submit():
+        movie.rating = float(form.rating.data)
+        movie.review = form.review.data
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template("edit.html",form = form,movie = movie)
+
+@app.route("/add", methods = ["GET","POST"])
+def add_movie():
+    form=AddMovieForm()
+    return render_template("add.html",form = form)
 
 if __name__ == '__main__':
     app.run(debug=True)
