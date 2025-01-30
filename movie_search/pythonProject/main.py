@@ -11,12 +11,15 @@ header = {
     "accept": "application/json",
     "Authorization": f"Bearer {api_access_token}"
 }
-params = {
+param = {
     "query":"Pulp Fiction",
-
 }
+movie_id=  680
+# response = requests.get(url,headers =header,params=param)
+# print(response.json())
 
-response = requests.get(url,headers =header,params=params)
-# print(response.status_code)
-for results in response.json()["results"]:
-    print(results["original_title"])
+response = requests.get(f"https://api.themoviedb.org/3/movie/{movie_id}", headers=header, )
+print(response.json()["poster_path"])
+
+# for results in response.json()["results"]:
+#     print(results["original_title"],results["release_date"])
