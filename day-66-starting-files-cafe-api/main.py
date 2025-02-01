@@ -106,9 +106,35 @@ def post_new_cafe():
     db.session.commit()
     return jsonify(response={"success": "Successfully added the new cafe."})
 # HTTP PUT/PATCH - Update Record
-@app.route("/update-price/<cafe_id>")
+@app.route("/update-price/<int:cafe_id>",methods=["PATCH"])
 def update_price(cafe_id):
-    
+    cafe = db.get_or_404(Cafe, cafe_id)
+    new_price = request.args.get("new_price")
+    if cafe:
+        cafe.coffee_price = new_price
+        db.session.commit()
+        return jsonify(response={"success": "Successfully updated the price."}),200
+    else:
+        return jsonify(error={"Not Found": "Sorry a cafe was that id was not found in the database."}),404
+
+@app.route("/report-closed/<int:cafe_id>",methods=["GET","DELETE"])
+def delete(cafe_id):
+    cafe = db.get_or_404(Cafe, cafe_id)
+    if cafe:
+        api_key = request.args.get("api_key")
+        if api_key == "TopSecretAPIKey":
+            db.session.delete(cafe)
+            db.session.commit()
+            return jsonify(response = {"success": "Successfully deleted the cafe."}),200
+        else:
+            return jsonify(error = {"error":"Sorry that's not allowed. Have the correct api_key"}),403
+    else:
+        return jsonify(error = {"Not Found":"Sorry, a cafe with that name does not exist"}),404
+
+
+
+
+
 
 
 
